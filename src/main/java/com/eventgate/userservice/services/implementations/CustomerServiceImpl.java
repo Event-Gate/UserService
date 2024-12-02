@@ -25,10 +25,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .filter(fullName -> !fullName.trim().isEmpty())
                 .ifPresent(customer::setFullName);
 
-        Optional.ofNullable(request.recoveryEmail())
-                .filter(email -> !email.trim().isEmpty())
-                .ifPresent(customer::setRecoveryEmail);
-
         Optional.ofNullable(request.phone())
                 .filter(phone -> !phone.trim().isEmpty())
                 .ifPresent(customer::setPhone);

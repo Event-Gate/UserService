@@ -4,7 +4,6 @@ import com.eventgate.userservice.entities.Customer;
 import com.eventgate.userservice.repositories.CustomerRepository;
 import com.eventgate.userservice.security.jwt.JwtTokenProvider;
 import com.eventgate.userservice.services.implementations.CustomerDetailsServiceImpl;
-import com.eventgate.userservice.utils.UsernameGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,18 +25,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtTokenProvider tokenProvider;
     private final CustomerRepository customerRepository;
     private final CustomerDetailsServiceImpl customerDetailsServiceImpl;
-    private final UsernameGenerator usernameGenerator;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
+        String fullName = oAuth2User.getAttribute("given_name") + " " + oAuth2User.getAttribute("family_name");
 
         Customer customer = customerRepository.findByEmail(email)
                 .orElseGet(() -> {
                     Customer newCustomer = new Customer();
                     newCustomer.setEmail(email);
-                    newCustomer.setFullName(usernameGenerator.generateUsername());
+                    newCustomer.setFullName(fullName);
                     newCustomer.setLastLogin(LocalDateTime.now());
                     return customerRepository.save(newCustomer);
                 });

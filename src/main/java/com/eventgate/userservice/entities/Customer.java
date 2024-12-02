@@ -19,7 +19,6 @@ public class Customer {
     private String fullName;
     @Column(unique = true)
     private String phone;
-    private String recoveryEmail;
     private boolean isSeller = false;
     private boolean isAdmin = false;
     private LocalDateTime createdAt = LocalDateTime.now();
