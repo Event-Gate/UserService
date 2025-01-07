@@ -2,7 +2,7 @@ package com.eventgate.userservice.security.config;
 
 import com.eventgate.userservice.security.jwt.JwtAuthenticationFilter;
 import com.eventgate.userservice.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import com.eventgate.userservice.services.implementations.CustomerDetailsServiceImpl;
+import com.eventgate.userservice.services.implementations.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomerDetailsServiceImpl customerDetailsServiceImpl;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,7 +33,7 @@ public class SecurityConfig {
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     authorize.anyRequest().authenticated();
                 })
-                .userDetailsService(customerDetailsServiceImpl)
+                .userDetailsService(userDetailsServiceImpl)
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                 )

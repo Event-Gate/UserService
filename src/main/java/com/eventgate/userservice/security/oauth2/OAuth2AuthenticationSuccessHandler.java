@@ -1,9 +1,9 @@
 package com.eventgate.userservice.security.oauth2;
 
-import com.eventgate.userservice.entities.Customer;
-import com.eventgate.userservice.repositories.CustomerRepository;
+import com.eventgate.userservice.entities.User;
+import com.eventgate.userservice.repositories.UserRepository;
 import com.eventgate.userservice.security.jwt.JwtTokenProvider;
-import com.eventgate.userservice.services.implementations.CustomerDetailsServiceImpl;
+import com.eventgate.userservice.services.implementations.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Value("${redirect.url}")
     private String redirectURL;
     private final JwtTokenProvider tokenProvider;
-    private final CustomerRepository customerRepository;
-    private final CustomerDetailsServiceImpl customerDetailsServiceImpl;
+    private final UserRepository userRepository;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -32,17 +32,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String email = oAuth2User.getAttribute("email");
         String fullName = oAuth2User.getAttribute("given_name") + " " + oAuth2User.getAttribute("family_name");
 
-        Customer customer = customerRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseGet(() -> {
-                    Customer newCustomer = new Customer();
-                    newCustomer.setEmail(email);
-                    newCustomer.setFullName(fullName);
-                    newCustomer.setLastLogin(LocalDateTime.now());
-                    return customerRepository.save(newCustomer);
+                    User newUser = new User();
+                    newUser.setEmail(email);
+                    newUser.setFullName(fullName);
+                    newUser.setLastLogin(LocalDateTime.now());
+                    return userRepository.save(newUser);
                 });
 
-        UserDetails userDetails = customerDetailsServiceImpl.loadUserByUsername(email);
-        String token = tokenProvider.generateToken(customer.getId(), email, userDetails.getAuthorities());
+        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(email);
+        String token = tokenProvider.generateToken(user.getId(), email, userDetails.getAuthorities());
         log.error(token);
 
         String url = determineTargetUrl(request, response, authentication);

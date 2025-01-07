@@ -1,8 +1,8 @@
 package com.eventgate.userservice.utils;
 
-import com.eventgate.userservice.entities.Customer;
+import com.eventgate.userservice.entities.User;
 import com.eventgate.userservice.exceptions.UnauthorizedException;
-import com.eventgate.userservice.repositories.CustomerRepository;
+import com.eventgate.userservice.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -15,9 +15,9 @@ import java.util.Optional;
 
 @Component @AllArgsConstructor
 public class SecurityUtils {
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
 
-    public Customer getAuthenticatedCustomer() throws EntityNotFoundException, UnauthorizedException {
+    public User getAuthenticatedUser() throws EntityNotFoundException, UnauthorizedException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             throw new UnauthorizedException("No authentication found");
@@ -38,7 +38,7 @@ public class SecurityUtils {
             throw new UnauthorizedException("Unable to extract email from authentication");
         }
 
-        Optional<Customer> customer = customerRepository.findByEmail(email);
+        Optional<User> customer = userRepository.findByEmail(email);
         if (customer.isPresent()) {
             return customer.get();
         }
