@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@RestController @RequiredArgsConstructor @PreAuthorize("isAuthenticated()") @RequestMapping("/api/auth/customers")
-public class UserController {
+@RestController @RequiredArgsConstructor @PreAuthorize("isAuthenticated()") @RequestMapping("/api/auth/users")
+public class AuthenticatedUserController {
     private final UserService userService;
     private final UserMapper userMapper;
 

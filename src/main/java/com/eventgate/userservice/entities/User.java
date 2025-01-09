@@ -1,5 +1,7 @@
 package com.eventgate.userservice.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Table(name = "Users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,10 +30,11 @@ public class User {
     private LocalDateTime lastLogin;
 
     @ManyToMany
-//    @JoinTable(
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "following_id")
-//    )
+    @JoinTable(
+            name = "user_follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "seller_id")
+    )
     private Set<User> followings = new HashSet<>();
 
     @ManyToMany(mappedBy = "followings")
