@@ -1,7 +1,36 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: UserService
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/event_db
+      auto-index-creation: true
   cloud:
     consul:
       host: localhost
       port: 8500
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+
+jwt:
+  secret: ${JWT_SECRET}
+
+app:
+  allowedOrigins: http://localhost:5173
+
+redirect:
+  url: http://localhost:8080/
+
