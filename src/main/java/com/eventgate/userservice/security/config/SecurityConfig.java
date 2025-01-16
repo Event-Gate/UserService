@@ -29,10 +29,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-                    authorize.anyRequest().authenticated();
-                })
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/auth/**").authenticated()
+                        .anyRequest().denyAll())
                 .userDetailsService(userDetailsServiceImpl)
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(oAuth2AuthenticationSuccessHandler)
