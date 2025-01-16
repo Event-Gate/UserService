@@ -6,12 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
-
-    public DataUserResponse toDataCustomerResponse(User user) {
-        if (user == null) {
-            return null;
-        }
-
+    public DataUserResponse toResponse(User user) {
         return new DataUserResponse(
                 user.getId(),
                 user.getFullName(),
