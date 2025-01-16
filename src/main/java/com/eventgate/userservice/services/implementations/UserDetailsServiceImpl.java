@@ -1,8 +1,8 @@
 package com.eventgate.userservice.services.implementations;
 
 import com.eventgate.userservice.entities.User;
+import com.eventgate.userservice.exceptions.EntityNotFoundException;
 import com.eventgate.userservice.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,9 +1,9 @@
 package com.eventgate.userservice.utils;
 
 import com.eventgate.userservice.entities.User;
+import com.eventgate.userservice.exceptions.EntityNotFoundException;
 import com.eventgate.userservice.exceptions.UnauthorizedException;
 import com.eventgate.userservice.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
