@@ -1,25 +1,21 @@
 package com.eventgate.userservice.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Entity @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Table(name = "Users")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Document
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-    @Column(unique = true)
+    private String id;
     private String email;
-    @Column(unique = true)
     private String phone;
     private String fullName;
 
@@ -28,25 +24,6 @@ public class User {
 
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime lastLogin;
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_follows",
-            joinColumns = @JoinColumn(name = "follower_id"),
-            inverseJoinColumns = @JoinColumn(name = "seller_id")
-    )
-    private Set<User> followings = new HashSet<>();
-
-    @ManyToMany(mappedBy = "followings")
-    private Set<User> followers = new HashSet<>();
-
-    public void follow(User targetUser) {
-        followings.add(targetUser);
-        targetUser.getFollowers().add(this);
-    }
-
-    public void unfollow(User targetUser) {
-        followings.remove(targetUser);
-        targetUser.getFollowers().remove(this);
-    }
+    private Set<String> followingIds = new HashSet<>();
+    private Set<String> followerIds = new HashSet<>();
 }
