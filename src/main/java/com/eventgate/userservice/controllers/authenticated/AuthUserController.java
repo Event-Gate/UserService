@@ -1,7 +1,7 @@
 package com.eventgate.userservice.controllers.authenticated;
 
-import com.eventgate.userservice.dtos.DataUserRequest;
-import com.eventgate.userservice.dtos.DataUserResponse;
+import com.eventgate.userservice.dtos.UserRequest;
+import com.eventgate.userservice.dtos.UserResponse;
 import com.eventgate.userservice.entities.User;
 import com.eventgate.userservice.exceptions.EntityNotFoundException;
 import com.eventgate.userservice.exceptions.UnauthorizedException;
@@ -33,9 +33,9 @@ public class AuthUserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<DataUserResponse> updateCurrentCustomer(@Valid @RequestBody DataUserRequest request) throws UnauthorizedException, EntityNotFoundException {
+    public ResponseEntity<UserResponse> updateCurrentCustomer(@Valid @RequestBody UserRequest request) throws UnauthorizedException, EntityNotFoundException {
         User updatedUser = userService.updateAuthenticatedCustomerDetails(request);
-        DataUserResponse response = userMapper.toResponse(updatedUser);
+        UserResponse response = userMapper.toResponse(updatedUser);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -52,8 +52,8 @@ public class AuthUserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<DataUserResponse> getAuthenticatedUser() throws EntityNotFoundException, UnauthorizedException {
-        DataUserResponse user = userService.getAuthenticatedUser();
+    public ResponseEntity<UserResponse> getAuthenticatedUser() throws EntityNotFoundException, UnauthorizedException {
+        UserResponse user = userService.getAuthenticatedUser();
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

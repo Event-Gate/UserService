@@ -1,6 +1,6 @@
 package com.eventgate.userservice.controllers.open;
 
-import com.eventgate.userservice.dtos.DataUserResponse;
+import com.eventgate.userservice.dtos.UserResponse;
 import com.eventgate.userservice.exceptions.EntityNotFoundException;
 import com.eventgate.userservice.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class PublicUserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<DataUserResponse> getUser(@PathVariable("userId") String userId) throws EntityNotFoundException {
+    public ResponseEntity<UserResponse> getUser(@PathVariable("userId") String userId) throws EntityNotFoundException {
         return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 }

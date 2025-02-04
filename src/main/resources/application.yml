@@ -1,15 +1,20 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   application:
-    name: UserService
+    name: user-service
   data:
     mongodb:
       uri: mongodb://localhost:27017/event_db
       auto-index-creation: true
   cloud:
     consul:
+      discovery:
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 10s
+        instance-id: ${spring.application.name}:${random.value}
+        service-name: user-service
       host: localhost
       port: 8500
   security:
@@ -23,14 +28,27 @@ spring:
               - openid
               - profile
               - email
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
+        provider:
+          google:
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: email
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topic:
+      name: auth-topic
 
 jwt:
   secret: ${JWT_SECRET}
-
-app:
-  allowedOrigins: http://localhost:5173
+  expiration: ${JWT_EXPIRATION}
 
 redirect:
-  url: http://localhost:8080/
+  url: http://localhost:8081/
 
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG

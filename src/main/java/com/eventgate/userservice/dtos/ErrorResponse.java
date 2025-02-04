@@ -1,4 +1,4 @@
-package com.eventgate.userservice.exceptions;
+package com.eventgate.userservice.dtos;
 
 import java.time.LocalDateTime;
 import java.util.Map;

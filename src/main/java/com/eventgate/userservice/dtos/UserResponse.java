@@ -1,6 +1,6 @@
 package com.eventgate.userservice.dtos;
 
-public record DataUserResponse(
+public record UserResponse(
         String id,
         String fullName,
         String email

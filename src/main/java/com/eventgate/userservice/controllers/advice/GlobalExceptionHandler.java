@@ -1,5 +1,8 @@
-package com.eventgate.userservice.exceptions;
+package com.eventgate.userservice.controllers.advice;
 
+import com.eventgate.userservice.exceptions.EntityNotFoundException;
+import com.eventgate.userservice.dtos.ErrorResponse;
+import com.eventgate.userservice.exceptions.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -18,13 +18,15 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public String generateToken(String customerId, String email, Collection<? extends GrantedAuthority> authorities) {
+    @Value("${jwt.expiration}")
+    private long jwtExpiration;
+
+    public String generateToken(String userId, String email, Collection<? extends GrantedAuthority> authorities) {
         Date currentDate = new Date();
-        long jwtExpiration = 86400000;
         Date expireDate = new Date(currentDate.getTime() + jwtExpiration);
 
         return Jwts.builder()
-                .subject(customerId)
+                .subject(userId)
                 .claim("email", email)
                 .claim("authorities", authorities.stream()
                         .map(GrantedAuthority::getAuthority)
@@ -39,7 +41,7 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public String getCustomerId(String token){
+    public String getUserId(String token){
         return Jwts.parser()
                 .verifyWith((SecretKey) key())
                 .build()

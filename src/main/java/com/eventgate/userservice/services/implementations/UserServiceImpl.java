@@ -1,15 +1,17 @@
 package com.eventgate.userservice.services.implementations;
 
-import com.eventgate.userservice.dtos.DataUserResponse;
+import com.eventgate.userservice.dtos.UserResponse;
+import com.eventgate.userservice.dtos.UserResult;
 import com.eventgate.userservice.exceptions.EntityNotFoundException;
 import com.eventgate.userservice.mappers.UserMapper;
 import com.eventgate.userservice.utils.SecurityUtils;
-import com.eventgate.userservice.dtos.DataUserRequest;
+import com.eventgate.userservice.dtos.UserRequest;
 import com.eventgate.userservice.entities.User;
 import com.eventgate.userservice.exceptions.UnauthorizedException;
 import com.eventgate.userservice.repositories.UserRepository;
 import com.eventgate.userservice.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +27,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public User updateAuthenticatedCustomerDetails(DataUserRequest request) throws UnauthorizedException, EntityNotFoundException {
+    public User updateAuthenticatedCustomerDetails(UserRequest request) throws UnauthorizedException, EntityNotFoundException {
         User user = securityUtils.getAuthenticatedUser();
 
         Optional.ofNullable(request.fullName())
@@ -94,15 +96,50 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public DataUserResponse getUser(String userId) throws EntityNotFoundException {
+    public UserResult processOAuth2User(OAuth2User oAuth2User) {
+        String email = oAuth2User.getAttribute("email");
+        if (email == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
+
+        Optional<User> existingUser = userRepository.findByEmail(email);
+
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (user.getId() == null) {
+                throw new IllegalStateException("User ID cannot be null for existing user");
+            }
+            return new UserResult(new UserResponse(user.getId(), user.getFullName(), user.getEmail()), false);
+        }
+
+        User newUser = createNewUser(oAuth2User);
+        if (newUser.getId() == null) {
+            throw new IllegalStateException("User ID cannot be null for new user");
+        }
+
+        return new UserResult(new UserResponse(newUser.getId(), newUser.getFullName(), newUser.getEmail()), true);
+    }
+
+    @Override
+    public UserResponse getUser(String userId) throws EntityNotFoundException {
         return userRepository.findById(userId)
                 .map(userMapper::toResponse)
                 .orElseThrow(() -> new EntityNotFoundException("User with ID " + userId + " not found"));
     }
 
     @Override
-    public DataUserResponse getAuthenticatedUser() throws EntityNotFoundException, UnauthorizedException {
+    public UserResponse getAuthenticatedUser() throws EntityNotFoundException, UnauthorizedException {
         User user = securityUtils.getAuthenticatedUser();
         return userMapper.toResponse(user);
+    }
+
+    private User createNewUser(OAuth2User oAuth2User) {
+        String email = oAuth2User.getAttribute("email");
+        String fullName = oAuth2User.getAttribute("given_name") + " " + oAuth2User.getAttribute("family_name");
+
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setFullName(fullName);
+        return userRepository.save(newUser);
     }
 }
