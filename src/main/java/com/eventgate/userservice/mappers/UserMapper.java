@@ -10,7 +10,8 @@ public class UserMapper {
         return new UserResponse(
                 user.getId(),
                 user.getFullName(),
-                user.getEmail()
+                user.getEmail(),
+                user.isSeller()
         );
     }
 }

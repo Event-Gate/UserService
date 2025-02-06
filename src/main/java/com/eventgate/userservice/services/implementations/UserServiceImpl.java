@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
             if (user.getId() == null) {
                 throw new IllegalStateException("User ID cannot be null for existing user");
             }
-            return new UserResult(new UserResponse(user.getId(), user.getFullName(), user.getEmail()), false);
+            return new UserResult(new UserResponse(user.getId(), user.getFullName(), user.getEmail(), user.isSeller()), false);
         }
 
         User newUser = createNewUser(oAuth2User);
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("User ID cannot be null for new user");
         }
 
-        return new UserResult(new UserResponse(newUser.getId(), newUser.getFullName(), newUser.getEmail()), true);
+        return new UserResult(new UserResponse(newUser.getId(), newUser.getFullName(), newUser.getEmail(), newUser.isSeller()), true);
     }
 
     @Override
